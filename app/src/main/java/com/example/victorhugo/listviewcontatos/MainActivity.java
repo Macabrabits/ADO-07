@@ -1,5 +1,7 @@
 package com.example.victorhugo.listviewcontatos;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -9,12 +11,17 @@ import android.view.*;
 import android.database.sqlite.*;
 import android.database.*;
 
+import com.example.victorhugo.listviewcontatos.DataBase.DataBase;
+import com.example.victorhugo.listviewcontatos.Domain.RepositorioContato;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     ImageButton btnAdd;
     ListView lstContatos;
     EditText txtName;
     DataBase dataBase;
     SQLiteDatabase conn;
+    RepositorioContato repositorioContato;
+    ArrayAdapter<String> adpContatos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +36,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
 
             dataBase = new DataBase(this);
-            conn = dataBase.getReadableDatabase();
+            conn = dataBase.getWritableDatabase();
+
+            repositorioContato = new RepositorioContato(conn);
+
+            //repositorioContato.testeInserirContatos("44444444");
+
+            adpContatos = repositorioContato.buscaContatos(this);
+
+            lstContatos.setAdapter(adpContatos);
 
             AlertDialog.Builder dlg = new AlertDialog.Builder(this);
             dlg.setMessage("Conexão criada com sucesso");
@@ -44,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dlg.show();
         }
 
+
+
     }
 
     @Override
@@ -51,4 +68,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(this,signUp.class);
         startActivity(intent);
     }
+
+
 }
